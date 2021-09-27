@@ -15,7 +15,7 @@ pipeline {
         stage("Tag git version") {
             //when { expression {env.BRANCH_NAME == "master"} }
             steps {
-            script{
+               script {
                 def latestVersion = sh (returnStdout: true, script: 'git describe --tags --abbrev=0 --match *.*.* 2> /dev/null || echo 1.0.0').trim()
                 def (major, minor, patch) = latestVersion.tokenize('.').collect { it.toInteger() }
                 def newVersion = "${major}.${minor + 1}.0"
@@ -26,7 +26,7 @@ pipeline {
                 sshagent(['github-klebedev']) {
                   sh (script: "git push origin $newVersion")
                 }
-
+              }
             }
         }
         stage('Build Docker image') {
