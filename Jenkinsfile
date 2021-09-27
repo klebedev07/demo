@@ -21,7 +21,7 @@ pipeline {
                 def newVersion = "${major}.${minor + 1}.0"
                 sh 'echo "$newVersion"'
                 sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
-
+                sh 'echo "created new tag!!!!!!!!!!"'
 
                 sshagent(['github-klebedev']) {
                   sh (script: "git push origin $newVersion")
