@@ -20,7 +20,13 @@ pipeline {
                 def (major, minor, patch) = latestVersion.tokenize('.').collect { it.toInteger() }
                 def newVersion = "${major}.${minor + 1}.0"
                 sh 'echo "$newVersion"'
-                sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
+                gitTagExists=$(git tag -l '$newVersion')
+
+                if [ -n "$gitTagExists" ]; then
+                    echo "tag $newVersion already exists."
+                    sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
+                fi
+
 
                 sshagent(['github-klebedev']) {
                   sh (script: "git push origin $newVersion")
