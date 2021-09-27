@@ -22,7 +22,9 @@ pipeline {
                 }
                 sh 'echo "$newVersion"'
                 sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
-                sh (script: "git push origin $newVersion")
+
+                sshagent(['github-klebedev']) {
+                  sh (script: "git push origin $newVersion")
             }
         }
         stage('Build Docker image') {
