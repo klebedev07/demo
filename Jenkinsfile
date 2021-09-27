@@ -13,7 +13,7 @@ pipeline {
             }
         }
         stage("Tag git version") {
-            when { expression {env.BRANCH_NAME == "master"} }
+            //when { expression {env.BRANCH_NAME == "master"} }
             steps {
             script{
                 def latestVersion = sh (returnStdout: true, script: 'git describe --tags --abbrev=0 --match *.*.* 2> /dev/null || echo 1.0.0').trim()
