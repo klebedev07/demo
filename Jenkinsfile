@@ -15,7 +15,7 @@ pipeline {
         stage("Tag git version") {
             when { expression {env.BRANCH_NAME == "master"} }
             steps {
-                newVersion = nextVersionFromGit()
+                def newVersion = nextVersionFromGit()
                 sh 'echo "$newVersion"'
                 sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
                 sh (script: "git push origin $newVersion")
