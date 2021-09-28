@@ -33,17 +33,15 @@ pipeline {
             steps {
                 sh 'echo "build docker"'
                 script {
-                   dockerImage = docker.build "klebede/test-repository" + ":$newVersion"
+                   dockerImage = docker.build "klebede/test-repository/demo" + ":$newVersion"
                 }
             }
         }
         stage('Push Docker image') {
            environment {
-//               DOCKER_HUB_LOGIN = credentials('docker-hub')
-                 registryCredential = 'docker-hub'
+              registryCredential = 'docker-hub'
           }
             steps {
-//                 sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
                 sh 'echo "push docker"'
                 script {
                     docker.withRegistry( '', registryCredential ) {
