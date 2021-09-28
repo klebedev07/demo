@@ -33,7 +33,7 @@ pipeline {
             steps {
                 sh 'echo "build docker"'
                 script {
-                   dockerImage = docker.build "klebede/test-repository" + ":demo:$newVersion"
+                   dockerImage = docker.build "klebede/test-repository" + ":demo-$newVersion"
                 }
             }
         }
