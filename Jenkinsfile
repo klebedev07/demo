@@ -19,10 +19,11 @@ pipeline {
             steps {
                script {
                 def latestVersion = sh (returnStdout: true, script: 'git describe --tags --abbrev=0 --match "*.*.*" 2> /dev/null || echo 1.0.0').trim()
+                sh 'echo "latestVersion !!!!!!!!!! ${latestVersion}"'
                 def (major, minor, patch) = latestVersion.tokenize('.').collect { it.toInteger() }
                 newVersion = "${major}.${minor + 1}.0"
                 sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
-                sh 'echo "created new tag!!!!!!!!!!"'
+                sh 'echo "created new tag!!!!!!!!!! ${newVersion}"'
 
               sshagent(['github-klebedev']) {
                    sh (script: "git push origin $newVersion")
