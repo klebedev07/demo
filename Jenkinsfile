@@ -1,4 +1,5 @@
 def newVersion
+def dockerImage
 
 pipeline {
     agent any
@@ -19,31 +20,36 @@ pipeline {
             steps {
                script {
                 def latestVersion = sh (returnStdout: true, script: 'git describe --tags --abbrev=0 --match "*.*.*" 2> /dev/null || echo 1.0.0').trim()
-                sh 'echo "latestVersion !!!!!!!!!! ${latestVersion}"'
                 def (major, minor, patch) = latestVersion.tokenize('.').collect { it.toInteger() }
                 newVersion = "${major}.${minor + 1}.0"
                 sh (script: "git tag -a $newVersion -m 'Tag release newVersion'")
-                sh 'echo "created new tag!!!!!!!!!! ${newVersion}"'
-
-              sshagent(['github-klebedev']) {
+                sshagent(['github-klebedev']) {
                    sh (script: "git push origin $newVersion")
+                }
               }
-              }
-
             }
         }
         stage('Build Docker image') {
             steps {
                 sh 'echo "build docker"'
+                script {
+                   dockerImage = docker.build "klebede/test-repository" + ":$newVersion"
+                }
             }
         }
         stage('Push Docker image') {
-//             environment {
-//                 DOCKER_HUB_LOGIN = credentials('docker-hub')
-//             }
+           environment {
+//               DOCKER_HUB_LOGIN = credentials('docker-hub')
+                 registryCredential = 'docker-hub'
+          }
             steps {
 //                 sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
                 sh 'echo "push docker"'
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                         dockerImage.push()
+                    }
+                }
             }
         }
     }
